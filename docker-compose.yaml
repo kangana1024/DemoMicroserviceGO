@@ -1,19 +1,22 @@
-
 version: "3"
 services:
   goservice:
-    build: "."
+    #build: ./
+    image: kangana512/goservicetest:1.0
     ports:
       - "8081:8081"
-    networks: 
+    volumes:
+      - ./gobuild/test:/go/bin/test:ro
+    networks:
       - backend
   nginx:
-    build: nginx
+    image: nginx
     ports:
       - "80:80"
-    
+
     volumes:
       - ./www-web:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - "goservice"
     networks:
@@ -27,5 +30,5 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
-networks: 
-  backend:    
+networks:
+  backend:
