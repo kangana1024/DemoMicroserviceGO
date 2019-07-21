@@ -1,0 +1,31 @@
+
+version: "3"
+services:
+  goservice:
+    build: "."
+    ports:
+      - "8081:8081"
+    networks: 
+      - backend
+  nginx:
+    build: nginx
+    ports:
+      - "80:80"
+    
+    volumes:
+      - ./www-web:/usr/share/nginx/html:ro
+    depends_on:
+      - "goservice"
+    networks:
+      - backend
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: bird_encyclopedia
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+networks: 
+  backend:    
